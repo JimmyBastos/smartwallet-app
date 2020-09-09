@@ -4,7 +4,7 @@ import { RectButton } from 'react-native-gesture-handler'
 
 export const Container = styled(RectButton)`
   border-radius: 10px;
-  background: ${props => props.theme.foreground};
+  background: ${props => props.theme.colors.foreground};
   width: 100%;
 `
 
@@ -19,7 +19,7 @@ export const Shadow = styled.View`
   height: 100%;
   width: 100%;
   opacity: .25;
-  background-color: ${props => props.theme.foreground};
+  background-color: ${props => props.theme.colors.foreground};
   shadow-color: #000;
   elevation: 16;
   z-index: 0;
