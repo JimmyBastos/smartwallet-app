@@ -1,30 +1,56 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 
 import { useNavigation } from '@react-navigation/native'
-
-import FeatherIcon from 'react-native-vector-icons/Feather'
+import { useAuth } from '../../hooks/auth'
+import { ThemeContext } from 'styled-components'
 
 import {
   View,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  ImageBackground,
   Text,
-  Image
+  StyleSheet
 } from 'react-native'
-
-import Card from '../../components/Card'
-import Button from '../../components/Button'
 
 import headerBackground from '../../assets/background2.png'
 
+import FeatherIcon from 'react-native-vector-icons/Feather'
+
+import { numberToBRL } from '../../utils/formatNumber'
+import Card from '../../components/Card'
+import Button from '../../components/Button'
+
 import {
   Container,
+  Header,
+  UserInformationContainer,
+  WellcomeMessage,
+  UserAvatarContainer,
+  UserAvatarImage,
+  Balance,
+  BalanceDescription,
+  PaymentStatsCard,
+  PaymentStatsTitle,
+  PaymentStatsBalance,
+  InvoiceCardTitle,
+  InvoiceCardDescription,
+  InvoiceCardBalance,
   Title
 } from './styles'
 
 const Dashboard = () => {
+  const theme = useContext(ThemeContext)
+  const navigation = useNavigation()
+
+  const [totalBalance, setTotalBalance] = useState(0)
+  const [unpayedTotal, setUnpayedTotal] = useState(0)
+  const [payedTotal, setPayedTotal] = useState(0)
+  const [payedCount, setPayedCount] = useState(0)
+  const [unpayedCount, setUnpayedCount] = useState(0)
+
+  const { user } = useAuth()
+
   const [invoices] = useState([
     {
       card: 'Mastercard',
@@ -58,7 +84,47 @@ const Dashboard = () => {
     }
   ])
 
-  const navigation = useNavigation()
+  const handleInvoicesNavigate = (credit_card_id = null) => {
+    navigation.navigate('CreditCardBills', { credit_card_id })
+  }
+
+  useEffect(() => {
+    setTotalBalance(invoices.reduce(
+      (value, invoince) => (value + Number(invoince.value)), 0
+    ))
+
+    setUnpayedTotal(invoices.reduce(
+      (value, invoince) => {
+        return !invoince.paid_at ? value + Number(invoince.value) : value
+      }, 0
+    ))
+
+    setPayedTotal(invoices.reduce(
+      (value, invoince) => {
+        return invoince.paid_at ? value + Number(invoince.value) : value
+      }, 0
+    ))
+
+    setPayedCount(invoices.reduce(
+      (value, invoince) => (
+        value + Number(!!invoince.paid_at)
+      ), 0
+    ))
+
+    setUnpayedCount(invoices.reduce(
+      (value, invoince) => (
+        value + Number(!invoince.paid_at)
+      ), 0
+    ))
+  },
+  [
+    invoices,
+    setTotalBalance,
+    setUnpayedTotal,
+    setPayedTotal,
+    setPayedCount,
+    setUnpayedCount
+  ])
 
   return (
     <>
@@ -67,143 +133,60 @@ const Dashboard = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         enabled
       >
-        <ScrollView
-          style={{ flex: 1 }}
-        >
-          <ImageBackground
+        <ScrollView>
+          <Header
             source={headerBackground}
-            style={{
-              minHeight: 272,
-              marginBottom: 36
-            }}
-            imageStyle={{
-              borderBottomLeftRadius: 8,
-              borderBottomRightRadius: 8
-            }}
+            imageStyle={{ borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }}
           >
             <Container>
-              <View
-                style={{
-                  marginTop: 16,
-                  marginBottom: 32,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <Text style={{
-                  fontSize: 24,
-                  color: '#FFF',
-                  fontFamily: 'Poppins-SemiBold'
-                }}>
-                  Olá, Jimmy Bastos
-                </Text>
+              <UserInformationContainer>
+                <WellcomeMessage>
+                  Olá, {user.name}
+                </WellcomeMessage>
 
-                <View
-                  style={{
-                    backgroundColor: '#fff',
-                    padding: 3,
-                    borderRadius: 50
-                  }}
-                >
-                  <Image
-                    style={{
-                      height: 48,
-                      width: 48,
-                      borderRadius: 50
-                    }}
-                    source={{ uri: 'https://avatars0.githubusercontent.com/u/17859531' }}
-                  />
-                </View>
-              </View>
+                <UserAvatarContainer>
+                  <UserAvatarImage source={{ uri: user.avatar_url }} />
+                </UserAvatarContainer>
+              </UserInformationContainer>
 
               <View>
-                <Text
-                  style={{
-                    fontSize: 36,
-                    color: '#FFF',
-                    fontFamily: 'Poppins-Bold',
-                    lineHeight: 48
-                  }}
-                >
-                  R$ 5600,00
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: '#FFF',
-                    fontFamily: 'Poppins-Regular'
-                  }}
-                >
+                <Balance>
+                  {numberToBRL(totalBalance)}
+                </Balance>
+                <BalanceDescription>
                    Gastos até o dia 07/11
-                </Text>
+                </BalanceDescription>
               </View>
 
-              <Card
-                style={{
-                  position: 'absolute',
-                  bottom: -36,
-                  alignSelf: 'center'
-
-                }}
-                contentStyle={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}
-              >
+              <PaymentStatsCard contentStyle={{ ...styles.row, justifyContent: 'space-between' }}>
                 <View>
-                  <Text
-                    style={{
-                      fontFamily: 'Poppins-Regular',
-                      color: '#8896B3',
-                      marginBottom: 4
-                    }}
-                  >
-                3 Faturas Pagas
-                  </Text>
+                  <View style={{ ...styles.row, marginBottom: 4 }}>
+                    <FeatherIcon name="target" size={6} color={theme.colors.success}/>
+                    <PaymentStatsTitle>
+                      { payedCount } {payedCount === 1 ? 'Fatura Paga' : 'Faturas Pagas'}
+                    </PaymentStatsTitle>
+                  </View>
 
-                  <Text
-                    style={{
-                      fontFamily: 'Poppins-SemiBold',
-                      color: '#0400CD',
-                      fontSize: 20
-                    }}
-                  >
-                R$ 1200,00
-                  </Text>
+                  <PaymentStatsBalance style={{ color: theme.colors.primary }} >
+                    {numberToBRL(payedTotal)}
+                  </PaymentStatsBalance>
                 </View>
-                <FeatherIcon
-                  size={16}
-                  name="more-vertical"
-                  color= "#8896B3"
-                />
+                <FeatherIcon size={16} name="more-vertical" color={theme.colors.text} />
                 <View>
-                  <Text
-                    style={{
-                      fontFamily: 'Poppins-Regular',
-                      color: '#8896B3',
-                      marginBottom: 4
-                    }}
-                  >
-                     1 Fatura Pendente
-                  </Text>
+                  <View style={{ ...styles.row, marginBottom: 4 }}>
+                    <FeatherIcon name="target" size={6} color={theme.colors.error}/>
+                    <PaymentStatsTitle>
+                      { unpayedCount } {unpayedCount === 1 ? 'Fatura Pendente' : 'Faturas Pendentes'}
+                    </PaymentStatsTitle>
+                  </View>
 
-                  <Text
-                    style={{
-                      fontFamily: 'Poppins-SemiBold',
-                      color: '#FF3962',
-                      fontSize: 20
-                    }}
-                  >
-                R$ 1200,00
-                  </Text>
-
+                  <PaymentStatsBalance style={{ color: theme.colors.error }} >
+                    {numberToBRL(unpayedTotal)}
+                  </PaymentStatsBalance>
                 </View>
-              </Card>
+              </PaymentStatsCard>
             </Container>
-
-          </ImageBackground>
+          </Header>
 
           <Container>
             <Title>
@@ -212,48 +195,28 @@ const Dashboard = () => {
 
             {invoices.map((invoice, index) => (
               <Card
-                key={`invoice-card-${index}`}
-                contentStyle={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}
-                style={{
-                  marginBottom: 16
-                }}
+                key={`invoice-${index}=${invoice.invoice_id}`}
+                style={{ marginBottom: 16 }}
+                contentStyle={{ ...styles.row, justifyContent: 'space-between' }}
+                onPress={() =>
+                  handleInvoicesNavigate(invoice.credit_card_id)
+                }
               >
                 <View>
-                  <Text
-                    style={{
-                      fontFamily: 'Poppins-Medium',
-                      color: '#0400CD',
-                      fontSize: 16
-                    }}
-                  >
+                  <InvoiceCardTitle>
                     {invoice.card}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: 'Poppins-Regular',
-                      color: '#8896B3'
-                    }}
-                  >
+                  </InvoiceCardTitle>
+                  <InvoiceCardDescription>
                     {invoice.expires_at}
-                  </Text>
+                  </InvoiceCardDescription>
                 </View>
-                <Text
-                  style={{
-                    fontFamily: 'Poppins-Medium',
-                    fontSize: 16,
-                    color: invoice.paid_at ? '#4C4E54' : '#FF3962'
-                  }}
-                >
-                    R$ {invoice.value},00
-                </Text>
+                <InvoiceCardBalance isPayed={!!invoice.payed_at}>
+                  {numberToBRL(invoice.value)}
+                </InvoiceCardBalance>
               </Card>
             ))}
 
-            <Button>
+            <Button onPress={handleInvoicesNavigate}>
               Todas as Faturas
             </Button>
 
@@ -263,5 +226,12 @@ const Dashboard = () => {
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  }
+})
 
 export default Dashboard

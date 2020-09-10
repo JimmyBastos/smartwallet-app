@@ -56,9 +56,10 @@ const AuthProvider = ({ children }) => {
       console.error(error)
 
       const data = {
-        token: 'usuario-nao-encontrada',
+        token: 'usuario-nao-encontrado',
         user: {
-          nome: 'Jimmy Bastos'
+          name: 'Jimmy Bastos',
+          avatar_url: 'https://avatars0.githubusercontent.com/u/17859531'
         }
       }
 
