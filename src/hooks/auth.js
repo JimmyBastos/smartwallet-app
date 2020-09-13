@@ -1,8 +1,8 @@
-import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
+import React, { createContext, useCallback, useState, useContext, useEffect, useRef } from 'react'
 
 import AsyncStorage from '@react-native-community/async-storage'
 
-import api from '../services/api'
+import api, { setAutorizationToken } from '../services/api'
 
 import PropTypes from 'prop-types'
 
@@ -31,43 +31,31 @@ const AuthProvider = ({ children }) => {
 
       if (token && user) {
         setAuthData({ token, user: JSON.parse(user) })
+        setAutorizationToken(token)
       }
 
       setLoading(false)
     }
 
     loadStoragedData()
-  })
+  }, [])
 
   const signIn = useCallback(async ({ email, senha }) => {
-    try {
-      const data = await api.post('/login', {
+    // TODO: POST to login
+    const { data: [user] } = await api.get('/usuarios', {
+      params: {
         email,
         senha
-      })
-
-      await AsyncStorage.multiSet([
-        ['@SmartWallet:token', data.token],
-        ['@SmartWallet:user', JSON.stringify(data.user)]
-      ])
-
-      setAuthData(data)
-    } catch (error) {
-      console.error(error)
-
-      const data = {
-        token: 'usuario-nao-encontrado',
-        user: {
-          name: 'Jimmy Bastos',
-          avatar_url: 'https://avatars0.githubusercontent.com/u/17859531'
-        }
       }
+    })
 
-      await AsyncStorage.multiSet([
-        ['@SmartWallet:token', data.token],
-        ['@SmartWallet:user', JSON.stringify(data.user)]
-      ])
-    }
+    // TODO: Properly store user token
+    await AsyncStorage.multiSet([
+      ['@SmartWallet:token', user.email],
+      ['@SmartWallet:user', JSON.stringify(user)]
+    ])
+
+    setAuthData({ user, token: user.email })
   }, [])
 
   const signOut = useCallback(async () => {
