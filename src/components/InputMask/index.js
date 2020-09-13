@@ -7,7 +7,7 @@ import Input from '../Input'
 import PropTypes from 'prop-types'
 
 const InputMask = React.forwardRef(
-  ({ type, ...rest }, ref) => {
+  ({ type, style, inputStyle, ...rest }, ref) => {
     const [value, setValue] = useState('')
     const [rawValue, setRawValue] = useState('')
 
@@ -19,6 +19,7 @@ const InputMask = React.forwardRef(
     return (
       <TextInputMask
         type={type}
+        style={style}
         includeRawValueInChangeText
         value={value}
         onChangeText={handleOnChangeText}
@@ -26,6 +27,7 @@ const InputMask = React.forwardRef(
         customTextInputProps={{
           ref,
           rawValue,
+          style,
           ...rest
         }}
         {...rest}
@@ -37,7 +39,9 @@ const InputMask = React.forwardRef(
 InputMask.displayName = 'InputMask'
 
 InputMask.propTypes = {
-  type: PropTypes.string.isRequired
+  type: PropTypes.string.isRequired,
+  style: PropTypes.object,
+  inputStyle: PropTypes.object
 }
 
 export default InputMask
