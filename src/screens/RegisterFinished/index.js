@@ -26,7 +26,7 @@ const RegisterFinished = () => {
           style={styleSheet.button}
           onPress={handleButtonClick}
         >
-              Ok
+          Ok
         </Button>
       </Message>
     </View>
