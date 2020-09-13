@@ -33,6 +33,7 @@ import {
 } from './styles'
 
 import InputMask from '../../components/InputMask'
+import cpfValidator from '../../utils/cpfValidator'
 
 const SignUp = () => {
   const theme = useContext(ThemeContext)
@@ -48,13 +49,15 @@ const SignUp = () => {
   const handleSignUp = useCallback(
     async (formData) => {
       try {
+        console.log(formData)
+
         formRef.current.setErrors({})
 
         const schema = Yup.object().shape({
           nome: Yup.string()
             .required('Nome obrigatório'),
           cpf: Yup.string()
-            .required('CPF obrigatório'),
+            .test('CPF Valido', 'Verifique seu CPF', cpfValidator),
           celular: Yup.string()
             .required('Celular obrigatório'),
           email: Yup.string()
@@ -66,15 +69,11 @@ const SignUp = () => {
 
         await schema.validate(formData, { abortEarly: false })
 
-        api.post('cadastro', formData)
+        await api.post('usuarios', formData)
 
-        navigation.navigate('SignIn')
-
-        Alert.alert(
-          'Cadastro realizado com sucesso!',
-          'Você já pode fazer login.'
-        )
+        navigation.navigate('RegisterFinished')
       } catch (error) {
+        console.log(error)
         if (error instanceof Yup.ValidationError) {
           formRef.current.setErrors(
             getValidationErrors(error)
@@ -97,7 +96,6 @@ const SignUp = () => {
       >
         <ScrollView
           keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flex: 1 }}
         >
           <Container>
             <View>
@@ -180,17 +178,18 @@ const SignUp = () => {
                 Criar Conta
               </Button>
             </Form>
-            <BackToSignIn
-              onPress={() => navigation.navigate('SignIn')}
-            >
-              <Icon name="arrow-left" size={20} color={theme.colors.text} />
-              <BackToSignInText>
-                Voltar Para o Login
-              </BackToSignInText>
-            </BackToSignIn>
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <BackToSignIn
+        onPress={() => navigation.navigate('SignIn')}
+      >
+        <Icon name="arrow-left" size={20} color={theme.colors.text} />
+        <BackToSignInText>
+          Voltar Para o Login
+        </BackToSignInText>
+      </BackToSignIn>
     </>
   )
 }

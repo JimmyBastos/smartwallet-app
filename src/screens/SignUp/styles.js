@@ -27,6 +27,8 @@ export const BackToSignIn = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+
+  background-color: ${props => props.theme.colors.background};
 `
 
 export const BackToSignInText = styled.Text`

@@ -38,6 +38,8 @@ export const CreateAccountButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   flex-direction: row;
+
+  background-color: ${props => props.theme.colors.background};
 `
 
 export const CreateAccountButtonText = styled.Text`

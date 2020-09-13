@@ -83,7 +83,6 @@ const SignIn = () => {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        enabled
       >
         <ScrollView
           keyboardShouldPersistTaps="handled"
@@ -131,22 +130,23 @@ const SignIn = () => {
                 Entrar
               </Button>
             </Form>
-            <ForgotPassword>
+            {false && <ForgotPassword>
               <ForgotPasswordText>
                 Esqueci minha senha
               </ForgotPasswordText>
-            </ForgotPassword>
+            </ForgotPassword>}
 
-            <CreateAccountButton
-              onPress={() => navigation.navigate('SignUp')}
-            >
-              <Icon name="log-in" size={20} color={theme.colors.text} />
-              <CreateAccountButtonText>
-                Criar uma conta
-              </CreateAccountButtonText>
-            </CreateAccountButton>
           </Container>
         </ScrollView>
+
+        <CreateAccountButton
+          onPress={() => navigation.navigate('SignUp')}
+        >
+          <Icon name="log-in" size={20} color={theme.colors.text} />
+          <CreateAccountButtonText>
+                Criar uma conta
+          </CreateAccountButtonText>
+        </CreateAccountButton>
       </KeyboardAvoidingView>
     </>
   )
