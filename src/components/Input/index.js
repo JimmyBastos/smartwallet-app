@@ -7,20 +7,28 @@ import React, {
   useImperativeHandle
 } from 'react'
 
+import { View } from 'react-native'
+
 import PropTypes from 'prop-types'
 
-import { Container, TextInput, Icon } from './styles'
+import {
+  Container,
+  InputField,
+  TextInput,
+  Icon,
+  ErrorMessage
+} from './styles'
 
 import { useField } from '@unform/core'
 import { ThemeContext } from 'styled-components'
 
 const Input = React.forwardRef(
-  ({ name, icon, rawValue = '', onChangeText, ...props }, ref) => {
+  ({ name, icon, style, rawValue = '', onChangeText, ...props }, ref) => {
     const theme = useContext(ThemeContext)
 
     const {
-      defaultValue = '',
       registerField,
+      defaultValue = '',
       fieldName,
       error
     } = useField(name)
@@ -73,25 +81,34 @@ const Input = React.forwardRef(
 
     return (
       <Container
-        isFocused={isFocused}
-        isFilled={isFilled}
-        hasError={!!error}
+        style={style}
       >
-        <Icon
-          name={icon}
-          size={20}
-          color={isFocused || isFilled ? theme.colors.primary : theme.colors.text }
-        />
+        <InputField
+          isFocused={isFocused}
+          isFilled={isFilled}
+          hasError={!!error}
+        >
+          <Icon
+            name={icon}
+            size={20}
+            color={isFocused || isFilled ? theme.colors.primary : theme.colors.text }
+          />
 
-        <TextInput
-          ref={inputRef}
-          placeholderTextColor={theme.colors.text}
-          defaultValue={defaultValue}
-          onChangeText={handleOnChange}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          {...props}
-        />
+          <TextInput
+            ref={inputRef}
+            placeholderTextColor={theme.colors.text}
+            defaultValue={defaultValue}
+            onChangeText={handleOnChange}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            {...props}
+          />
+
+        </InputField>
+
+        <ErrorMessage>
+          {error}
+        </ErrorMessage>
       </Container>
     )
   }
@@ -102,8 +119,9 @@ Input.displayName = 'Input'
 Input.propTypes = {
   name: PropTypes.string.isRequired,
   icon: PropTypes.string,
-  value: PropTypes.string,
-  rawValue: PropTypes.string,
+  style: PropTypes.object,
+  value: PropTypes.any,
+  rawValue: PropTypes.any,
   focus: PropTypes.func,
   onChangeText: PropTypes.func
 }
