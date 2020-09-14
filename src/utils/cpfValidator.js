@@ -21,23 +21,23 @@ const cpfValidator = value => {
   var rest
   var sum = 0
 
-  for (let i = 1; i <= 9; i++) { sum = sum + parseInt(value[i - 1]) * (SIZE - i) }
+  for (let i = 1; i <= 9; i++) { sum = sum + parseInt(value[i - 1], 10) * (SIZE - i) }
 
   rest = (sum * 10) % SIZE
 
   if ((rest === 10) || (rest === SIZE)) { rest = 0 }
 
-  if (rest !== parseInt(value[9])) { return false }
+  if (rest !== parseInt(value[9], 10)) { return false }
 
   sum = 0
 
-  for (let i = 1; i <= 10; i++) { sum = sum + parseInt(value[i - 1]) * (12 - i) }
+  for (let i = 1; i <= 10; i++) { sum = sum + parseInt(value[i - 1], 10) * (12 - i) }
 
   rest = (sum * 10) % SIZE
 
   if ((rest === 10) || (rest === SIZE)) { rest = 0 }
 
-  if (rest !== parseInt(value[10])) { return false }
+  if (rest !== parseInt(value[10], 10)) { return false }
 
   return true
 }
