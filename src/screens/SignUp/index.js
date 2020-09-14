@@ -49,8 +49,6 @@ const SignUp = () => {
   const handleSignUp = useCallback(
     async (formData) => {
       try {
-        console.log(formData)
-
         formRef.current.setErrors({})
 
         const schema = Yup.object().shape({
