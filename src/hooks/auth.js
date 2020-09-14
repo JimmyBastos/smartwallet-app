@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useState, useContext, useEffect, useRef } from 'react'
+import React, { createContext, useCallback, useState, useContext, useEffect } from 'react'
 
 import AsyncStorage from '@react-native-community/async-storage'
 

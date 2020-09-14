@@ -1,12 +1,15 @@
 import React from 'react'
 
 import { AuthProvider } from './auth'
+import { FinancialDataProvider } from './financial'
 
 import PropTypes from 'prop-types'
 
 const AppProvider = ({ children }) => (
   <AuthProvider>
-    {children}
+    <FinancialDataProvider>
+      {children}
+    </FinancialDataProvider>
   </AuthProvider>
 )
 
