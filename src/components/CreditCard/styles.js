@@ -25,7 +25,9 @@ export const SpacedRow = styled.View`
 export const Action = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
+  margin-left: 16px;
 `
+
 export const ActionText = styled.Text`
   font-family: ${({ theme }) => theme.font.regular};
   color: #fff;

@@ -55,7 +55,7 @@ const CreditCard = ({ id: cartao_id, bandeira, numero, nome, validade }) => {
           {bandeira}
         </Brand>
 
-        {isEditable && (<>
+        {isEditable && (<SpacedRow>
           <Action onPress={handleEditCreditCardNavigate}>
             <ActionText>
             Editar
@@ -81,7 +81,7 @@ const CreditCard = ({ id: cartao_id, bandeira, numero, nome, validade }) => {
               color="#fff"
             />
           </Action>
-        </>)}
+        </SpacedRow>)}
 
       </SpacedRow>
 
