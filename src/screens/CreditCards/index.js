@@ -51,7 +51,7 @@ const CreditCards = () => {
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [selectedCard, setSelectedCard] = useState({})
-  const [cardInvoices, setCardInvoices] = useState({})
+  const [cardInvoices, setCardInvoices] = useState([])
 
   const { invoiceList, creditCardList } = useFinancialData()
 
@@ -167,7 +167,7 @@ const CreditCards = () => {
             />
           </View>
 
-          <Container style={{ marginTop: creditCardList.length ? 0 : 16 }}>
+          <Container style={{ marginTop: creditCardList.length > 1 ? 0 : 16 }}>
             <Title>
               Faturas
             </Title>
