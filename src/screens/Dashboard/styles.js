@@ -1,7 +1,4 @@
 import styled from 'styled-components/native'
-import { getBottomSpace } from 'react-native-iphone-x-helper'
-
-import Button from '../../components/Button'
 import Card from '../../components/Card'
 
 export const Container = styled.View`
@@ -14,9 +11,16 @@ export const Header = styled.ImageBackground`
   margin-bottom: 56px;
 `
 
+export const Title = styled.Text`
+  font-size: 18px;
+  color: ${props => props.theme.colors.primary};
+  font-family: ${props => props.theme.font.semibold};
+  margin-bottom: 8px;
+`
+
 export const UserInformationContainer = styled.View`
   margin-top: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -70,6 +74,7 @@ export const PaymentStatsTitle = styled.Text`
 
 export const PaymentStatsBalance = styled.Text`
   font-size: 20px;
+  text-align: right;
   font-family: ${props => props.theme.font.semibold};
 `
 
@@ -80,7 +85,7 @@ export const InvoiceCardTitle = styled.Text`
 `
 
 export const InvoiceCardDescription = styled.Text`
-  font-size: 14px;
+  font-size: 12px;
   font-family: ${props => props.theme.font.regular};
   color: ${props => props.theme.colors.text}
 `
@@ -89,21 +94,4 @@ export const InvoiceCardBalance = styled.Text`
   font-size: 16px;
   font-family: ${props => props.theme.font.medium};
   color: ${props => props.isPayed ? props.theme.colors.primary : props.theme.colors.secondary}
-`
-
-export const Title = styled.Text`
-  font-size: 18px;
-  color: ${props => props.theme.colors.primary};
-  font-family: ${props => props.theme.font.semibold};
-  margin-bottom: 8px;
-`
-
-export const ForgotPasswordText = styled.Text`
-  color: ${props => props.theme.colors.primary};
-  font-size: 16px;
-  font-family: ${props => props.theme.font.medium};
-`
-
-export const CreateParcelButton = styled(Button)`
-  padding: 16px 0 ${16 + getBottomSpace()}px;
 `
