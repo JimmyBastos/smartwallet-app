@@ -40,9 +40,11 @@ const EditCreditCardBill = () => {
   const expireDateRef = useRef(null)
   const paymentDateRef = useRef(null)
 
-  const [isUpdating] = useState(
-    route.params?.fatura_id
-  )
+  const [isUpdating, setIsUpdating] = useState(false)
+
+  useEffect(() => {
+    setIsUpdating(route.params?.fatura_id)
+  }, [route.params])
 
   useEffect(() => {
     if (isUpdating) {
@@ -52,11 +54,10 @@ const EditCreditCardBill = () => {
             data_pagamento: formatDate(new Date(data.data_pagamento), 'dd/MM/yyyy'),
             data_vencimento: formatDate(new Date(data.data_vencimento), 'dd/MM/yyyy')
           })
+
           formRef.current.setData(data)
         }
       )
-    } else {
-      formRef.current.setData({ cartao_id: route.params.cartao_id })
     }
   }, [isUpdating, route])
 
@@ -90,7 +91,10 @@ const EditCreditCardBill = () => {
         })
 
         await schema.validate(formData, { abortEarly: false })
-        await saveCreditCardBill(formData)
+
+        await saveCreditCardBill({
+          cartao_id: route.params.cartao_id, ...formData
+        })
 
         updateInvoiceList()
 
