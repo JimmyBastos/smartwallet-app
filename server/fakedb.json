@@ -1,5 +1,5 @@
 {
-  "usuarios": [
+  "usuario": [
     {
       "nome": "Jimmy Bastos",
       "cpf": "07854028532",
@@ -9,7 +9,7 @@
       "id": 1
     }
   ],
-  "cartoes": [
+  "cartao": [
     {
       "identificacao": "Visa • Final 6717",
       "bandeira": "Visa",
@@ -29,17 +29,25 @@
       "id": 2
     }
   ],
-  "faturas": [
+  "fatura": [
     {
       "valor": 75,
       "data_vencimento": "2020-10-10T00:00:00.000Z",
-      "id": 1
+      "id": 1,
+      "cartao_id": 1
+    },
+    {
+      "cartao_id": 1,
+      "valor": 95,
+      "data_vencimento": "2020-07-05T00:00:00.000Z",
+      "data_pagamento": "2020-07-01T00:00:00.000Z",
+      "id": 3
     },
     {
       "cartao_id": 2,
-      "valor": 50,
-      "data_vencimento": "2020-10-10T00:00:00.000Z",
-      "id": 2
+      "valor": 65,
+      "data_vencimento": "1997-11-27T00:00:00.000Z",
+      "id": 4
     }
   ]
 }

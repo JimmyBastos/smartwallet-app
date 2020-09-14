@@ -19,23 +19,43 @@ function useFinancialData () {
 const FinancialDataProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
   const [invoiceList, setInvoiceList] = useState([])
+  const [invoiceWithCardList, setInvoiceWithCardList] = useState([])
+  const [creditCardWithInvoicesList, setCreditCardWithInvoicesLis] = useState([])
   const [creditCardList, setCreditCardList] = useState([])
   const [financialReport, setFinancialReport] = useState({})
 
+  useEffect(() => {
+    // TODO: Deveria ser retornada pela API
+    setInvoiceWithCardList(
+      invoiceList.map(invoice => Object.assign({
+        cartao: creditCardList.find(cc => cc.id === invoice.cartao_id)
+      }, invoice))
+    )
+  }, [invoiceList, creditCardList])
+
+  useEffect(() => {
+    // TODO: Deveria ser retornada pela API
+    setCreditCardWithInvoicesLis(
+      creditCardList.map(card => Object.assign({
+        faturas: invoiceList.filter(inv => inv.cartao_id === card.id)
+      }, card))
+    )
+  }, [invoiceList, creditCardList])
+
   useEffect(function calculateReport () {
     const totalBalance = invoiceList.reduce(
-      (value, invoice) => (value + invoice.valor), 0
+      (value, invoice) => (value + (+invoice.valor)), 0
     )
 
-    const setUnpayedTotal = invoiceList.reduce(
-      (value, invoice) => (
-        !invoice.data_pagamento ? value + invoice.valor : value
-      ), 0
+    const unpayedTotal = invoiceList.reduce(
+      (value, invoice) => {
+        return !invoice.data_pagamento ? value + (+invoice.valor) : value
+      }, 0
     )
 
     const payedTotal = invoiceList.reduce(
       (value, invoice) => (
-        invoice.data_pagamento ? value + invoice.valor : value
+        invoice.data_pagamento ? value + (+invoice.valor) : value
       ), 0
     )
 
@@ -53,7 +73,7 @@ const FinancialDataProvider = ({ children }) => {
 
     setFinancialReport({
       totalBalance,
-      setUnpayedTotal,
+      unpayedTotal,
       payedTotal,
       payedCount,
       unpayedCount
@@ -81,7 +101,7 @@ const FinancialDataProvider = ({ children }) => {
   }, [])
 
   const updateCreditCardList = useCallback(async () => {
-    const { data } = await api.get('/cartoes')
+    const { data } = await api.get('/cartao')
 
     setCreditCardList(data)
 
@@ -92,7 +112,7 @@ const FinancialDataProvider = ({ children }) => {
   }, [])
 
   const updateInvoiceList = useCallback(async () => {
-    const { data } = await api.get('/faturas')
+    const { data } = await api.get('/fatura')
 
     setInvoiceList(data)
 
@@ -116,7 +136,9 @@ const FinancialDataProvider = ({ children }) => {
         financialReport,
         updateFinancialData,
         updateCreditCardList,
-        updateInvoiceList
+        updateInvoiceList,
+        creditCardWithInvoicesList,
+        invoiceWithCardList
       }}
     >
 

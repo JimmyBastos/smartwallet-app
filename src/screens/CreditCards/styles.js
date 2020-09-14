@@ -47,7 +47,7 @@ export const InvoiceCardDescription = styled.Text`
 export const InvoiceCardBalance = styled.Text`
   font-size: 18px;
   font-family: ${props => props.theme.font.semibold};
-  color: ${props => props.isPayed ? props.theme.colors.primary : props.theme.colors.secondary};
+  color: ${props => props.isPayed ? props.theme.colors.success : props.theme.colors.primary};
 `
 
 export const Title = styled.Text`

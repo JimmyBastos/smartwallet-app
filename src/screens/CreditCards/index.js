@@ -13,7 +13,6 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
-  Text,
   Alert
 } from 'react-native'
 
@@ -50,26 +49,21 @@ const CreditCards = () => {
   const slideRef = useRef(null)
 
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
-  const [selectedCard, setSelectedCard] = useState({})
-  const [cardInvoices, setCardInvoices] = useState([])
+  const [selectedCard, setSelectedCard] = useState({ faturas: [] })
 
-  const { invoiceList, creditCardList } = useFinancialData()
+  const { creditCardWithInvoicesList, updateInvoiceList } = useFinancialData()
 
   useEffect(() => {
     if (route.params?.cartao_id) {
-      setSelectedCard(creditCardList.find(
+      setActiveSlideIndex(creditCardWithInvoicesList.findIndex(
         card => (card.id === route.params?.cartao_id)
       ))
-    } else {
-      setSelectedCard(creditCardList[activeSlideIndex])
     }
-  }, [route.params, creditCardList, activeSlideIndex])
+  }, [route.params, creditCardWithInvoicesList])
 
   useEffect(() => {
-    setCardInvoices(invoiceList.filter(
-      invoice => invoice.cartao_id === selectedCard.id
-    ) || [])
-  }, [invoiceList, selectedCard])
+    setSelectedCard(creditCardWithInvoicesList[activeSlideIndex])
+  }, [creditCardWithInvoicesList, activeSlideIndex])
 
   const handleCreditCardBillDelete = useCallback((fatura_id) => {
     Alert.alert(
@@ -77,11 +71,17 @@ const CreditCards = () => {
       '',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'OK', onPress: () => api.delete(`faturas/${fatura_id}`) }
+        {
+          text: 'OK',
+          onPress: () => {
+            api.delete(`fatura/${fatura_id}`)
+            updateInvoiceList()
+          }
+        }
       ],
       { cancelable: false }
     )
-  }, [])
+  }, [updateInvoiceList])
 
   const handleEditCreditCardBillNavigate = useCallback(
     ({ cartao_id, fatura_id }) => {
@@ -132,8 +132,9 @@ const CreditCards = () => {
               ref={slideRef}
               layout={'default'}
               sliderWidth={viewportWidth}
+              firstItem={Number(activeSlideIndex)}
               itemWidth={viewportWidth - 64}
-              data={creditCardList}
+              data={creditCardWithInvoicesList}
               onSnapToItem={index => setActiveSlideIndex(index) }
               renderItem={({ item, index }) => (
                 <CreditCard
@@ -146,7 +147,7 @@ const CreditCards = () => {
               )}
             />
             <Pagination
-              dotsLength={creditCardList.length}
+              dotsLength={creditCardWithInvoicesList.length}
               activeDotIndex={activeSlideIndex}
               containerStyle={styles.paginationContainer}
               dotColor={theme.colors.primary}
@@ -167,19 +168,20 @@ const CreditCards = () => {
             />
           </View>
 
-          <Container style={{ marginTop: creditCardList.length > 1 ? 0 : 16 }}>
+          <Container style={{ marginTop: creditCardWithInvoicesList.length > 1 ? 0 : 16 }}>
             <Title>
               Faturas
             </Title>
 
-            {cardInvoices.map((invoice, index) => (
+            {selectedCard.faturas.map((invoice, index) => (
               <Card
-                key={`invoice-${index}=${invoice.fatura_id}`}
+                key={`invoice-${selectedCard.id}-${invoice.id}`}
                 style={{ marginBottom: 16 }}
                 contentStyle={{ flexDirection: 'row', justifyContent: 'space-between' }}
               >
                 <View>
                   <TouchableOpacity
+                    activeOpacity={0.65}
                     style={styles.row}
                     onPress={() =>
                       handleEditCreditCardBillNavigate({ fatura_id: invoice.id })
@@ -216,6 +218,7 @@ const CreditCards = () => {
                   </InvoiceCardBalance>
 
                   <TouchableOpacity
+                    activeOpacity={0.65}
                     onPress={() =>
                       handleCreditCardBillDelete(invoice.id)
                     }

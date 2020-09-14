@@ -42,7 +42,7 @@ const AuthProvider = ({ children }) => {
 
   const signIn = useCallback(async ({ email, senha }) => {
     // TODO: POST to login
-    const { data: [user] } = await api.get('/usuarios', {
+    const { data: [user] } = await api.get('/usuario', {
       params: {
         email,
         senha

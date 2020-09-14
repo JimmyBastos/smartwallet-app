@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react'
 
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { TabRouter, useNavigation, useRoute } from '@react-navigation/native'
 
 import * as Yup from 'yup'
 
@@ -11,6 +11,7 @@ import { Form } from '@unform/mobile'
 import getValidationErrors from '../../utils/getValidationErrors'
 
 import Button from '../../components/Button'
+// import CheckBox from '../../components/CheckBox'
 import BackNavigation from '../../components/BackNavigation'
 import InputMask from '../../components/InputMask'
 
@@ -27,6 +28,7 @@ import {
 
 import api from '../../services/api'
 import { useFinancialData } from '../../hooks/financial'
+import { numberToBRL } from '../../utils/formatNumber'
 
 const EditCreditCardBill = () => {
   const route = useRoute()
@@ -39,6 +41,7 @@ const EditCreditCardBill = () => {
   const valueRef = useRef(null)
   const expireDateRef = useRef(null)
   const paymentDateRef = useRef(null)
+  const paymentStatusRef = useRef(null)
 
   const [isUpdating, setIsUpdating] = useState(false)
 
@@ -48,10 +51,11 @@ const EditCreditCardBill = () => {
 
   useEffect(() => {
     if (isUpdating) {
-      api.get(`/faturas/${route.params.fatura_id}`).then(
+      api.get(`/fatura/${route.params.fatura_id}`).then(
         ({ data }) => {
           Object.assign(data, {
-            data_pagamento: formatDate(new Date(data.data_pagamento), 'dd/MM/yyyy'),
+            valor: numberToBRL(data.valor),
+            data_pagamento: data.data_pagamento ? formatDate(new Date(data.data_pagamento), 'dd/MM/yyyy') : '',
             data_vencimento: formatDate(new Date(data.data_vencimento), 'dd/MM/yyyy')
           })
 
@@ -62,16 +66,17 @@ const EditCreditCardBill = () => {
   }, [isUpdating, route])
 
   const saveCreditCardBill = useCallback(
-    ({ cartao_id, fatura_id, valor, data_vencimento, data_pagamento }) => {
+    ({ cartao_id, fatura_id, valor, data_vencimento, pagamento_efetutuado, data_pagamento }) => {
       const data = {
         cartao_id,
         valor,
+        pagamento_efetutuado,
         data_vencimento,
         data_pagamento
       }
       return isUpdating
-        ? api.put(`/faturas/${fatura_id}`, data)
-        : api.post('/faturas', data)
+        ? api.put(`/fatura/${fatura_id}`, data)
+        : api.post('/fatura', data)
     }, [isUpdating]
   )
 
@@ -88,12 +93,21 @@ const EditCreditCardBill = () => {
           data_vencimento: Yup.string()
             .required('Informe o vencimento da fatura')
 
+          // pagamento_efetuado: Yup.boolean(),
+
+          // data_pagamento: Yup.string()
+          //   .when('pagamento_efetuado', {
+          //     is: true,
+          //     then: Yup.string().required('Informe a data de pagamento')
+          //   })
+
         })
 
         await schema.validate(formData, { abortEarly: false })
 
         await saveCreditCardBill({
-          cartao_id: route.params.cartao_id, ...formData
+          cartao_id: route.params.cartao_id,
+          ...formData
         })
 
         updateInvoiceList()
@@ -112,7 +126,7 @@ const EditCreditCardBill = () => {
           )
         }
       }
-    }, [navigation, saveCreditCardBill]
+    }, [route.params, navigation, updateInvoiceList, saveCreditCardBill]
   )
 
   return (
@@ -160,10 +174,13 @@ const EditCreditCardBill = () => {
                 placeholder="Data de Vencimento"
                 returnKeyType="next"
                 options={{ format: 'DD/MM/YYYY' }}
-                onSubmitEditing={() => {
-                  paymentDateRef.current.focus()
-                }}
               />
+
+              {/* <CheckBox
+                ref={paymentStatusRef}
+                name="pagamento_efetuado"
+                label="Esta fatura já foi paga?"
+              /> */}
 
               <InputMask
                 ref={paymentDateRef}

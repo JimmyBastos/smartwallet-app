@@ -67,7 +67,7 @@ const SignUp = () => {
 
         await schema.validate(formData, { abortEarly: false })
 
-        await api.post('usuarios', formData)
+        await api.post('usuario', formData)
 
         navigation.navigate('RegisterFinished')
       } catch (error) {

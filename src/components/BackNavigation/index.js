@@ -18,7 +18,9 @@ const BackNavigation = ({ children, ...props }) => {
 
   return (
     <Container {...props}>
-      <TouchableOpacity onPress={handleNavigation}>
+      <TouchableOpacity
+        activeOpacity={0.65}
+        onPress={handleNavigation}>
         <FeatherIcon
           name="chevron-left"
           size={32}

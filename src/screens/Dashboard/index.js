@@ -50,7 +50,7 @@ const Dashboard = () => {
   const navigation = useNavigation()
 
   const { user, signOut } = useAuth()
-  const { invoiceList, creditCardList, financialReport, updateFinancialData } = useFinancialData()
+  const { invoiceWithCardList, creditCardList, financialReport, updateFinancialData } = useFinancialData()
 
   const [refreshing, setRefreshing] = React.useState(false)
 
@@ -105,7 +105,10 @@ const Dashboard = () => {
                     <UserAvatarImage source={{ uri: user.avatar_url }} />
                   </UserAvatarContainer>
 
-                  <TouchableOpacity onPress={signOut} >
+                  <TouchableOpacity
+                    activeOpacity={0.65}
+                    onPress={signOut}
+                  >
                     <BalanceDescription>
                       Sair
                     </BalanceDescription>
@@ -154,25 +157,30 @@ const Dashboard = () => {
           </Header>
 
           <Container>
-            {!!invoiceList.length && (
+            {!!invoiceWithCardList.length && (
               <Title>
                 Faturas
               </Title>
             )}
 
-            {invoiceList.slice(0, 5).map((invoice, index) => (
+            {invoiceWithCardList.slice(0, 5).map((invoice, index) => (
               <Card
                 key={`invoice-${index}=${invoice.fatura_id}`}
                 style={{ marginBottom: 16 }}
                 contentStyle={{ ...styles.row, justifyContent: 'space-between' }}
-                onPress={() =>
-                  handleInvoicesNavigate(invoice.cartao_id)
-                }
+
               >
                 <View>
-                  <InvoiceCardTitle>
-                    {invoice.cartao}
-                  </InvoiceCardTitle>
+                  <TouchableOpacity
+                    activeOpacity={0.65}
+                    onPress={() =>
+                      handleInvoicesNavigate(invoice.cartao_id)
+                    }>
+
+                    <InvoiceCardTitle>
+                      {invoice.cartao.identificacao}
+                    </InvoiceCardTitle>
+                  </TouchableOpacity>
                   <InvoiceCardDescription>
                     {invoice.data_pagamento ? 'Pagamento ' : 'Vencimento ' }
                     {formatDate(new Date(invoice.data_pagamento || invoice.data_vencimento), 'dd/MM/yyyy')}
@@ -184,7 +192,7 @@ const Dashboard = () => {
               </Card>
             ))}
 
-            {(!!invoiceList.length || !!creditCardList.length) && (
+            {(!!invoiceWithCardList.length || !!creditCardList.length) && (
               <Button onPress={handleInvoicesNavigate}>
                 Todas as Faturas
               </Button>

@@ -39,7 +39,7 @@ const CreditCard = ({ id: cartao_id, bandeira, numero, nome, validade }) => {
       'Todas as faturas associadas a ele também serão excluidas.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'OK', onPress: () => api.delete(`cartoes/${cartao_id}`) }
+        { text: 'OK', onPress: () => api.delete(`cartao/${cartao_id}`) }
       ],
       { cancelable: false }
     )
@@ -56,7 +56,10 @@ const CreditCard = ({ id: cartao_id, bandeira, numero, nome, validade }) => {
         </Brand>
 
         {isEditable && (<SpacedRow>
-          <Action onPress={handleEditCreditCardNavigate}>
+          <Action
+            activeOpacity={0.65}
+            onPress={handleEditCreditCardNavigate}
+          >
             <ActionText>
             Editar
             </ActionText>
@@ -69,6 +72,7 @@ const CreditCard = ({ id: cartao_id, bandeira, numero, nome, validade }) => {
           </Action>
 
           <Action
+            activeOpacity={0.65}
             onPress={handleEditCreditCardDelete}
           >
             <ActionText>

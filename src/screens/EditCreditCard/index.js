@@ -48,7 +48,7 @@ const EditCreditCard = () => {
 
   useEffect(() => {
     if (isUpdating) {
-      api.get(`/cartoes/${route.params?.cartao_id}`).then(
+      api.get(`/cartao/${route.params?.cartao_id}`).then(
         ({ data }) => formRef.current.setData(data)
       )
     }
@@ -66,8 +66,8 @@ const EditCreditCard = () => {
       }
 
       return isUpdating
-        ? api.put(`/cartoes/${cartao_id}`, data)
-        : api.post('/cartoes', data)
+        ? api.put(`/cartao/${cartao_id}`, data)
+        : api.post('/cartao', data)
     }, [isUpdating]
   )
 
