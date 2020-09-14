@@ -4,6 +4,8 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 
 import * as Yup from 'yup'
 
+import { format as formatDate } from 'date-fns'
+
 import { Form } from '@unform/mobile'
 
 import getValidationErrors from '../../utils/getValidationErrors'
@@ -24,9 +26,12 @@ import {
 } from './styles'
 
 import api from '../../services/api'
+import { useFinancialData } from '../../hooks/financial'
 
 const EditCreditCardBill = () => {
   const route = useRoute()
+
+  const { updateInvoiceList } = useFinancialData()
 
   const navigation = useNavigation()
 
@@ -42,28 +47,30 @@ const EditCreditCardBill = () => {
   useEffect(() => {
     if (isUpdating) {
       api.get(`/faturas/${route.params.fatura_id}`).then(
-        ({ data }) => formRef.current.setData(data)
+        ({ data }) => {
+          Object.assign(data, {
+            data_pagamento: formatDate(new Date(data.data_pagamento), 'dd/MM/yyyy'),
+            data_vencimento: formatDate(new Date(data.data_vencimento), 'dd/MM/yyyy')
+          })
+          formRef.current.setData(data)
+        }
       )
     } else {
-      console.log(route.params)
       formRef.current.setData({ cartao_id: route.params.cartao_id })
     }
   }, [isUpdating, route])
 
   const saveCreditCardBill = useCallback(
-    async ({ cartao_id, fatura_id, valor, data_vencimento, data_pagamento }) => {
+    ({ cartao_id, fatura_id, valor, data_vencimento, data_pagamento }) => {
       const data = {
         cartao_id,
         valor,
         data_vencimento,
         data_pagamento
       }
-
-      if (isUpdating) {
-        await api.put(`/faturas/${fatura_id}`, data)
-      } else {
-        await api.post('/faturas', data)
-      }
+      return isUpdating
+        ? api.put(`/faturas/${fatura_id}`, data)
+        : api.post('/faturas', data)
     }, [isUpdating]
   )
 
@@ -84,6 +91,8 @@ const EditCreditCardBill = () => {
 
         await schema.validate(formData, { abortEarly: false })
         await saveCreditCardBill(formData)
+
+        updateInvoiceList()
 
         navigation.navigate('CreditCardBillSaved', { cartao_id: formData.cartao_id })
       } catch (error) {
@@ -146,7 +155,7 @@ const EditCreditCardBill = () => {
                 icon="calendar"
                 placeholder="Data de Vencimento"
                 returnKeyType="next"
-                options={{ format: 'DD/MM/YY' }}
+                options={{ format: 'DD/MM/YYYY' }}
                 onSubmitEditing={() => {
                   paymentDateRef.current.focus()
                 }}
@@ -160,7 +169,7 @@ const EditCreditCardBill = () => {
                 icon="calendar"
                 placeholder="Data de Pagamento (opcional)"
                 returnKeyType="next"
-                options={{ format: 'DD/MM/YY' }}
+                options={{ format: 'DD/MM/YYYY' }}
                 onSubmitEditing={() => {
                   formRef.current.submitForm()
                 }}
