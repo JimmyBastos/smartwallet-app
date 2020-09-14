@@ -22,6 +22,7 @@ module.exports = {
   plugins: ['react'],
   rules: {
     'prettier/prettier': 0,
-    'react-native/no-inline-styles': 0
+    'react-native/no-inline-styles': 0,
+    camelcase: 0
   }
 }
