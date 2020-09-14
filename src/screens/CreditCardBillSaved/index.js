@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 
 import { View, StyleSheet } from 'react-native'
 
@@ -9,7 +9,6 @@ import Message from '../../components/Message'
 
 const CreditCardSaved = () => {
   const navigation = useNavigation()
-  const route = useRoute()
 
   const handleButtonClick = () => {
     navigation.navigate('Dashboard')
@@ -27,7 +26,7 @@ const CreditCardSaved = () => {
           style={styleSheet.button}
           onPress={handleButtonClick}
         >
-          Ok
+          Ver Resumo
         </Button>
       </Message>
     </View>
@@ -42,7 +41,7 @@ const styleSheet = StyleSheet.create({
   },
 
   button: {
-    width: 128,
+    width: 196,
     marginTop: 24,
     alignSelf: 'center'
   }
