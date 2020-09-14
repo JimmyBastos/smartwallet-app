@@ -23,7 +23,7 @@ const CreditCardSaved = () => {
     >
       <Message
         title="Tudo Pronto"
-        message="Agora é só cadastrar sua primeira fatura."
+        message="Você já pode cadastrar sua primeira fatura."
       >
         <Button
           style={styleSheet.button}
