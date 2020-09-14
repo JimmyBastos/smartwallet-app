@@ -14,7 +14,7 @@ const Message = ({ title, message, children }) => {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        maxWidth: 240
+        maxWidth: 320
       }}
     >
       <View>
