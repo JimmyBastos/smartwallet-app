@@ -7,8 +7,6 @@ import React, {
   useImperativeHandle
 } from 'react'
 
-import { View } from 'react-native'
-
 import PropTypes from 'prop-types'
 
 import {
