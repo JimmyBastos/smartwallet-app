@@ -20,8 +20,7 @@ import {
   Platform,
   ScrollView,
   Alert,
-  StyleSheet,
-  Text
+  StyleSheet
 } from 'react-native'
 
 import {
@@ -29,8 +28,11 @@ import {
 } from './styles'
 
 import api from '../../services/api'
+import { useFinancialData } from '../../hooks/financial'
 
 const EditCreditCard = () => {
+  const { updateCreditCardList } = useFinancialData()
+
   const formRef = useRef(null)
   const ccNumberInputRef = useRef(null)
   const cvcInputRef = useRef(null)
@@ -55,7 +57,6 @@ const EditCreditCard = () => {
   const saveCreditCard = useCallback(
     ({ cartao_id = null, bandeira, identificacao, nome, numero, cvc, validade }) => {
       const data = {
-        cartao_id,
         identificacao,
         bandeira,
         nome,
@@ -107,7 +108,9 @@ const EditCreditCard = () => {
 
         const { data } = await saveCreditCard(formData)
 
-        navigation.navigate('CreditCardSaved', { cartao_id: data.cartao_id })
+        updateCreditCardList()
+
+        navigation.navigate('CreditCardSaved', { cartao_id: data.id })
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           formRef.current.setErrors(
