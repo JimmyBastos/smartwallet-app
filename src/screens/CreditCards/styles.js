@@ -28,7 +28,7 @@ export const CreateCardText = styled.Text`
   font-family: ${props => props.theme.font.medium};
   color: #fff;
   font-size: 14px;
-  margin-right: 8px;
+  margin-right: 10px;
 `
 
 export const InvoiceCardTitle = styled.Text`
@@ -45,7 +45,7 @@ export const InvoiceCardDescription = styled.Text`
 `
 
 export const InvoiceCardBalance = styled.Text`
-  font-size: 18px;
+  font-size: 16px;
   font-family: ${props => props.theme.font.semibold};
   color: ${props => props.isPayed ? props.theme.colors.success : props.theme.colors.primary};
 `
