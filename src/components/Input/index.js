@@ -65,17 +65,20 @@ const Input = React.forwardRef(
           return rawValue || input.value
         },
         setValue (input, value) {
-          inputRef.current.value = value
-          inputRef.current.setNativeProps({
-            text: value
-          })
+          if (onChangeText) onChangeText(value)
+          else {
+            inputRef.current.value = value
+            inputRef.current.setNativeProps({
+              text: value
+            })
+          }
         },
         clearValue () {
           inputRef.current.value = ''
           inputRef.current.clar()
         }
       })
-    }, [registerField, rawValue, fieldName, inputRef])
+    }, [registerField, onChangeText, rawValue, fieldName, inputRef])
 
     return (
       <Container
