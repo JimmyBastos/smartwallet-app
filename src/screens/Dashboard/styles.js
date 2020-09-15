@@ -79,7 +79,7 @@ export const PaymentStatsBalance = styled.Text`
 `
 
 export const InvoiceCardTitle = styled.Text`
-  font-size: 16px;
+  font-size: 15px;
   color: ${props => props.theme.colors.primary};
   font-family: ${props => props.theme.font.semibold};
 `
@@ -91,7 +91,8 @@ export const InvoiceCardDescription = styled.Text`
 `
 
 export const InvoiceCardBalance = styled.Text`
-  font-size: 16px;
+  align-self: flex-start;
+  font-size: 15px;
   font-family: ${props => props.theme.font.semibold};
   color: ${props => props.isPayed ? props.theme.colors.primary : props.theme.colors.error}
 `
