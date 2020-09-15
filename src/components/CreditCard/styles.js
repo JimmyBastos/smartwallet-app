@@ -37,8 +37,8 @@ export const ActionText = styled.Text`
 
 export const CardNumber = styled(TextMask)`
   font-family: ${({ theme }) => theme.font.semibold};
-  font-size: 22px;
-  letter-spacing: 4px;
+  font-size: 20px;
+  letter-spacing: 5px;
   color: #fff;
 `
 

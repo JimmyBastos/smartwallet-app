@@ -22,10 +22,13 @@ import {
 } from './styles'
 
 import api from '../../services/api'
+import { useFinancialData } from '../../hooks/financial'
 
 const CreditCard = ({ id: cartao_id, bandeira, numero, nome, validade }) => {
   const isEditable = useState(!!cartao_id)
   const navigation = useNavigation()
+
+  const { updateFinancialData } = useFinancialData()
 
   const handleEditCreditCardNavigate = useCallback(
     () => {
@@ -39,11 +42,17 @@ const CreditCard = ({ id: cartao_id, bandeira, numero, nome, validade }) => {
       'Todas as faturas associadas a ele também serão excluidas.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'OK', onPress: () => api.delete(`cartao/${cartao_id}`) }
+        {
+          text: 'OK',
+          onPress: () => {
+            api.delete(`cartao/${cartao_id}`)
+            updateFinancialData()
+          }
+        }
       ],
       { cancelable: false }
     )
-  }, [cartao_id])
+  }, [cartao_id, updateFinancialData])
 
   return (
     <Card
