@@ -33,7 +33,7 @@ import { numberToBRL } from '../../utils/formatNumber'
 const EditCreditCardBill = () => {
   const route = useRoute()
 
-  const { updateInvoiceList } = useFinancialData()
+  const { updateFinancialData } = useFinancialData()
 
   const navigation = useNavigation()
 
@@ -54,7 +54,6 @@ const EditCreditCardBill = () => {
       api.get(`/fatura/${route.params.fatura_id}`).then(
         ({ data }) => {
           Object.assign(data, {
-            valor: numberToBRL(data.valor),
             data_pagamento: data.data_pagamento ? formatDate(new Date(data.data_pagamento), 'dd/MM/yyyy') : '',
             data_vencimento: formatDate(new Date(data.data_vencimento), 'dd/MM/yyyy')
           })
@@ -67,6 +66,7 @@ const EditCreditCardBill = () => {
 
   const saveCreditCardBill = useCallback(
     ({ cartao_id, fatura_id, valor, data_vencimento, pagamento_efetutuado, data_pagamento }) => {
+      console.log(cartao_id)
       const data = {
         cartao_id,
         valor,
@@ -106,11 +106,12 @@ const EditCreditCardBill = () => {
         await schema.validate(formData, { abortEarly: false })
 
         await saveCreditCardBill({
+          fatura_id: route.params?.fatura_id,
           cartao_id: route.params.cartao_id,
           ...formData
         })
 
-        updateInvoiceList()
+        updateFinancialData()
 
         navigation.navigate('CreditCardBillSaved', { cartao_id: formData.cartao_id })
       } catch (error) {
@@ -126,7 +127,7 @@ const EditCreditCardBill = () => {
           )
         }
       }
-    }, [route.params, navigation, updateInvoiceList, saveCreditCardBill]
+    }, [route.params, navigation, updateFinancialData, saveCreditCardBill]
   )
 
   return (

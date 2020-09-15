@@ -42,17 +42,23 @@ const EditCreditCard = () => {
   const navigation = useNavigation()
   const route = useRoute()
 
-  const [isUpdating] = useState(
-    route.params?.cartao_id
+  const [isUpdating, setIsUpdating] = useState(false)
+
+  useEffect(
+    () => {
+      setIsUpdating(!!route.params?.cartao_id)
+    }, [route.params]
   )
 
-  useEffect(() => {
-    if (isUpdating) {
-      api.get(`/cartao/${route.params?.cartao_id}`).then(
-        ({ data }) => formRef.current.setData(data)
-      )
-    }
-  }, [isUpdating, route.params])
+  useEffect(
+    () => {
+      if (isUpdating) {
+        api.get(`/cartao/${route.params?.cartao_id}`).then(
+          ({ data }) => formRef.current.setData(data)
+        )
+      }
+    }, [isUpdating, route.params]
+  )
 
   const saveCreditCard = useCallback(
     ({ cartao_id = null, bandeira, identificacao, nome, numero, cvc, validade }) => {
@@ -76,11 +82,14 @@ const EditCreditCard = () => {
       try {
         formRef.current.setErrors({})
 
-        const rawCardNumber = formData.numero?.join('')
+        const rawCardNumber = Array.isArray(formData.numero)
+          ? formData.numero.join('')
+          : formData.numero
 
         const [ccBrand] = creditCardType(rawCardNumber)
 
         Object.assign(formData, {
+          cartao_id: route.params?.cartao_id,
           numero: rawCardNumber,
           bandeira: ccBrand?.niceType,
           identificacao: `${ccBrand?.niceType} • Final ${formData.numero?.slice()?.pop()}`
