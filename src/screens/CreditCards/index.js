@@ -51,7 +51,7 @@ const CreditCards = () => {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0)
   const [selectedCard, setSelectedCard] = useState({ faturas: [] })
 
-  const { creditCardWithInvoicesList, updateInvoiceList } = useFinancialData()
+  const { creditCardWithInvoicesList, updateFinancialData } = useFinancialData()
 
   useEffect(() => {
     if (route.params?.cartao_id) {
@@ -75,13 +75,13 @@ const CreditCards = () => {
           text: 'OK',
           onPress: () => {
             api.delete(`fatura/${fatura_id}`)
-            updateInvoiceList()
+            updateFinancialData()
           }
         }
       ],
       { cancelable: false }
     )
-  }, [updateInvoiceList])
+  }, [updateFinancialData])
 
   const handleEditCreditCardBillNavigate = useCallback(
     ({ cartao_id, fatura_id }) => {
@@ -173,9 +173,9 @@ const CreditCards = () => {
               Faturas
             </Title>
 
-            {selectedCard.faturas.map((invoice, index) => (
+            {selectedCard?.faturas?.map((invoice, index) => (
               <Card
-                key={`invoice-${selectedCard.id}-${invoice.id}`}
+                key={`invoice-${selectedCard?.id}-${invoice.id}`}
                 style={{ marginBottom: 16 }}
                 contentStyle={{ flexDirection: 'row', justifyContent: 'space-between' }}
               >
@@ -184,7 +184,10 @@ const CreditCards = () => {
                     activeOpacity={0.65}
                     style={styles.row}
                     onPress={() =>
-                      handleEditCreditCardBillNavigate({ fatura_id: invoice.id })
+                      handleEditCreditCardBillNavigate({
+                        fatura_id: invoice.id,
+                        cartao_id: route.params.cartao_id
+                      })
                     }
                   >
                     <InvoiceCardTitle>
@@ -224,7 +227,7 @@ const CreditCards = () => {
                     }
                   >
                     <FeatherIcon
-                      style={{ marginLeft: 16, marginTop: 4 }}
+                      style={{ marginLeft: 16, marginTop: 2 }}
                       name="trash-2"
                       size={18}
                       color={theme.colors.error}
@@ -236,7 +239,7 @@ const CreditCards = () => {
 
             <Button
               onPress={() =>
-                handleEditCreditCardBillNavigate({ cartao_id: selectedCard.id })
+                handleEditCreditCardBillNavigate({ cartao_id: selectedCard?.id })
               }
             >
               Nova Fatura
