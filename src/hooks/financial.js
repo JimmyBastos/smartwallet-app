@@ -27,9 +27,11 @@ const FinancialDataProvider = ({ children }) => {
   useEffect(() => {
     // TODO: Deveria ser retornada pela API
     setInvoiceWithCardList(
-      invoiceList.map(invoice => Object.assign({
-        cartao: creditCardList.find(cc => cc.id === invoice.cartao_id)
-      }, invoice))
+      invoiceList.map(
+        inv => Object.assign({ cartao: creditCardList.find(cc => cc.id === inv.cartao_id) }, inv)
+      ).filter(
+        inv => inv.cartao
+      )
     )
   }, [invoiceList, creditCardList])
 
@@ -105,7 +107,7 @@ const FinancialDataProvider = ({ children }) => {
 
     setCreditCardList(data)
 
-    await AsyncStorage.setItem(
+    AsyncStorage.setItem(
       '@SmartWallet:cards',
       JSON.stringify(data)
     )
@@ -116,15 +118,15 @@ const FinancialDataProvider = ({ children }) => {
 
     setInvoiceList(data)
 
-    await AsyncStorage.setItem(
+    AsyncStorage.setItem(
       '@SmartWallet:invoices',
       JSON.stringify(data)
     )
   }, [])
 
   const updateFinancialData = useCallback(async () => {
-    await updateCreditCardList()
-    await updateInvoiceList()
+    updateCreditCardList()
+    updateInvoiceList()
   }, [updateCreditCardList, updateInvoiceList])
 
   return (
